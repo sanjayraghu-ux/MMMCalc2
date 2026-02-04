@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetricWorks MMM Pricing Estimator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="calculator-container" id="capture-area">
+        <div class="input-panel">
+            <h1>MetricWorks MMM Pricing Estimator</h1>
+            <p class="desc">Define your marketing mix modeling scope and cadence.</p>
+
+            <div class="section-label">1. Scope & Product Names</div>
+            <div class="control-group">
+                <label>Number of Brands: <span id="brandLabel">1</span></label>
+                <input type="range" id="brands" min="1" max="5" value="1">
+            </div>
+
+            <div class="control-group">
+                <label>Number of Products: <span id="productLabel">1</span></label>
+                <input type="range" id="products" min="1" max="10" value="1">
+            </div>
+
+            <div id="productNameInputs" class="dynamic-inputs"></div>
+
+            <div class="section-label">2. Model Cadence</div>
+            <div class="control-group">
+                <label>Update Frequency</label>
+                <select id="cadence">
+                    <option value="365">Daily</option>
+                    <option value="180">15 per month</option>
+                    <option value="104">2 per week</option>
+                    <option value="52">1 per week</option>
+                    <option value="12" selected>Monthly (1 per month)</option>
+                    <option value="custom">Custom (per year)</option>
+                </select>
+            </div>
+
+            <div class="control-group" id="customCadenceBox" style="display:none;">
+                <label>Custom Models Per Year</label>
+                <input type="number" id="customCadenceValue" value="4" min="1">
+            </div>
+
+            <div class="section-label">3. Add-ons & Implementation</div>
+            <div class="control-group">
+                <label>Strategy Consulting: <span id="consultLabel">0</span> Hours</label>
+                <input type="range" id="consulting" min="0" max="40" value="0" step="5">
+            </div>
+
+            <div class="fees-grid">
+                <div class="control-group">
+                    <label>Onboarding Fee ($)</label>
+                    <input type="number" id="onboard" value="5000">
+                </div>
+                <div class="control-group">
+                    <label>Handoff Fee ($)</label>
+                    <input type="number" id="handoff" value="2500">
+                </div>
+            </div>
+        </div>
+
+        <div class="display-panel">
+            <div class="summary-card annual-summary">
+                <div class="price-header">Year 1 Total Investment</div>
+                <div class="secondary-price">$<span id="yearOneTotal">0</span></div>
+                <p class="small-note">Total Contract Value (Service + Setup)</p>
+            </div>
+
+            <div class="summary-card">
+                <div class="price-header">Monthly Recurring Fee</div>
+                <div class="main-price">$<span id="monthlyTotal">0</span></div>
+                <div class="status-badge" id="minFeeBadge">Min Platform Fee Applied</div>
+                
+                <div class="breakdown">
+                    <div class="item">
+                        <span>Platform (Min $2,500)</span>
+                        <span id="platformCost">$0</span>
+                    </div>
+                    <div class="item">
+                        <span>Standard Support</span>
+                        <span>$750</span>
+                    </div>
+                    <div class="item">
+                        <span>Consulting (@ $250/hr)</span>
+                        <span id="consultCost">$0</span>
+                    </div>
+                    <div class="item total-row">
+                        <span>One-Time Implementation</span>
+                        <span id="oneTimeTotal">$0</span>
+                    </div>
+                </div>
+            </div>
+            <button class="export-btn" onclick="exportPDF()">Export Proposal PDF</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
