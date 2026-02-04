@@ -1,0 +1,61 @@
+<div class="calculator-container" id="capture-area">
+    <div class="input-panel">
+        <h1>MaaS Architect</h1>
+        <p class="desc">Define your modeling scope and execution cadence.</p>
+
+        <div class="section-label">1. Scope & Entities</div>
+        <div class="control-group">
+            <label>Brands/Markets: <span id="brandLabel">1</span></label>
+            <input type="range" id="brands" min="1" max="5" value="1">
+        </div>
+
+        <div class="control-group">
+            <label>Number of Products: <span id="productLabel">1</span></label>
+            <input type="range" id="products" min="1" max="10" value="1">
+        </div>
+
+        <div id="productNameInputs" class="dynamic-inputs">
+            </div>
+
+        <div class="section-label">2. Modeling Cadence</div>
+        <div class="control-group">
+            <label>Update Frequency</label>
+            <select id="cadence">
+                <option value="365">Daily (365/yr)</option>
+                <option value="180">15 per month (180/yr)</option>
+                <option value="104">2 per week (104/yr)</option>
+                <option value="52">1 per week (52/yr)</option>
+                <option value="12">Monthly (12/yr)</option>
+                <option value="custom">Custom (per year)</option>
+            </select>
+        </div>
+
+        <div class="control-group" id="customCadenceBox" style="display:none;">
+            <label>Custom Models Per Year</label>
+            <input type="number" id="customCadenceValue" value="4">
+        </div>
+
+        <div class="section-label">3. Human Resources</div>
+        <div class="control-group">
+            <label>Strategy Consulting (Hours): <span id="consultLabel">0</span></label>
+            <input type="range" id="consulting" min="0" max="40" value="0" step="5">
+        </div>
+    </div>
+
+    <div class="display-panel">
+        <div class="summary-card annual-summary">
+            <div class="price-header">Year 1 Contract Value</div>
+            <div class="secondary-price">$<span id="yearOneTotal">0</span></div>
+            <p class="small-note">Total TCO including Onboarding</p>
+        </div>
+        
+        <div class="summary-card">
+            <div class="price-header">Monthly Recurring</div>
+            <div class="main-price">$<span id="monthlyTotal">0</span></div>
+            <div class="status-badge" id="minFeeBadge">Min Platform Fee Applied</div>
+            <div class="breakdown" id="breakdown-list">
+                </div>
+        </div>
+        <button class="export-btn" onclick="exportPDF()">Download Proposal PDF</button>
+    </div>
+</div>
