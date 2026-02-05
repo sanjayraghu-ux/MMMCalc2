@@ -4,6 +4,7 @@ inputs.forEach(id => el[id] = document.getElementById(id));
 
 const productContainer = document.getElementById('productNameInputs');
 
+// Injects a row for every product defined in the count
 function updateProductRows() {
     const count = parseInt(el.products.value) || 0;
     const existingRows = productContainer.querySelectorAll('.product-row').length;
@@ -23,6 +24,7 @@ function updateProductRows() {
                 </select>
             `;
             productContainer.appendChild(row);
+            // Ensure changing a cadence triggers a recalculation
             row.querySelector('.prod-cadence').addEventListener('change', calculate);
         }
     } else if (count < existingRows) {
@@ -43,9 +45,11 @@ function calculate() {
     let totalPlatformSum = 0;
     let totalAnnualModels = 0;
 
+    // Iterate through each specific product row to calculate custom complexity
     productContainer.querySelectorAll('.prod-cadence').forEach(sel => {
         const annualModels = parseInt(sel.value);
-        let costPerModel = 450;
+        let costPerModel = 450; 
+        
         if (annualModels >= 365) costPerModel = 200;
         else if (annualModels >= 180) costPerModel = 300;
         else if (annualModels >= 104) costPerModel = 350;
@@ -54,35 +58,34 @@ function calculate() {
         totalPlatformSum += (annualModels * costPerModel) / 12;
     });
 
+    // Apply the account-level platform floor
     const finalPlatformFee = Math.max(MIN_PLATFORM, totalPlatformSum);
     const totalSupport = numProducts * SUPPORT_RATE;
     const consultTotal = (parseInt(el.consulting.value) || 0) * CONSULT_RATE;
-    const monthlyBaseTotal = finalPlatformFee + totalSupport + consultTotal;
-
+    
     const billingMultiplier = parseFloat(el.billing.value);
-    const monthlyDiscounted = monthlyBaseTotal * billingMultiplier;
-    const annualSavings = (monthlyBaseTotal - monthlyDiscounted) * 12;
-
+    const monthlyDiscounted = (finalPlatformFee + totalSupport + consultTotal) * billingMultiplier;
+    
     const totalOnboarding = parseFloat(el.onboard.value || 0) * numProducts;
     const yearOne = (monthlyDiscounted * 12) + totalOnboarding;
 
+    // Average price per model calculation for the breakdown metrics
     const avgPricePerModel = totalAnnualModels > 0 ? ((monthlyDiscounted * 12) / totalAnnualModels) : 0;
 
+    // UI Updates
     document.getElementById('monthlyTotal').innerText = Math.round(monthlyDiscounted).toLocaleString();
     document.getElementById('yearOneTotal').innerText = Math.round(yearOne).toLocaleString();
     document.getElementById('platformCost').innerText = '$' + Math.round(finalPlatformFee).toLocaleString();
     document.getElementById('supportCost').innerText = '$' + totalSupport.toLocaleString();
     document.getElementById('consultCost').innerText = '$' + consultTotal.toLocaleString();
     document.getElementById('oneTimeTotal').innerText = '$' + totalOnboarding.toLocaleString();
-    document.getElementById('discountTag').innerText = Math.round((1 - billingMultiplier) * 100) + '%';
     document.getElementById('totalModelsCount').innerText = totalAnnualModels.toLocaleString();
     document.getElementById('avgModelPrice').innerText = '$' + Math.round(avgPricePerModel).toLocaleString();
     
-    const savingsEl = document.getElementById('savingsContainer');
-    savingsEl.style.display = annualSavings > 0 ? 'inline-block' : 'none';
-    if (annualSavings > 0) document.getElementById('totalSavings').innerText = Math.round(annualSavings).toLocaleString();
-
+    // Minimum badge visibility logic
     document.getElementById('minFeeBadge').style.visibility = (finalPlatformFee === MIN_PLATFORM) ? 'visible' : 'hidden';
 }
 
-// ... (Rest of functions: resetCalculator, exportPDF, closeSuccess)
+inputs.forEach(id => el[id].addEventListener('input', calculate));
+el.billing.addEventListener('change', calculate);
+calculate();
