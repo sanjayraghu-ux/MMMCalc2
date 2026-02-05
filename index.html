@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MetricWorks MMM Pricing Estimator</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
@@ -28,12 +29,12 @@
                 <input type="number" id="products" min="1" max="20" value="1">
             </div>
 
-            <div class="section-label">2. Product Configuration (Cadence per Product)</div>
+            <div class="section-label">2. Product Configuration</div>
             <div id="productNameInputs" class="dynamic-inputs"></div>
 
-            <div class="section-label">3. Add-ons & Implementation</div>
+            <div class="section-label">3. Service & Implementation</div>
             <div class="control-group">
-                <label>Strategy Consulting (Hours)</label>
+                <label>Strategy Consulting (Monthly Hours)</label>
                 <input type="number" id="consulting" min="0" max="100" value="0">
             </div>
 
@@ -49,7 +50,7 @@
             <div class="summary-card annual-summary">
                 <div class="price-header">Year 1 Total Investment</div>
                 <div class="secondary-price">$<span id="yearOneTotal">0</span></div>
-                <p class="small-note">Total TCO (Service + Cumulative Onboarding)</p>
+                <p class="small-note">Total TCO (Service + Onboarding)</p>
             </div>
 
             <div class="summary-card">
@@ -59,7 +60,7 @@
                 
                 <div class="breakdown">
                     <div class="item">
-                        <span>Aggregate Platform (Min $2,500)</span>
+                        <span>Aggregate Platform (Min $2.5k)</span>
                         <span id="platformCost">$0</span>
                     </div>
                     <div class="item">
@@ -72,7 +73,7 @@
                     </div>
                     <div class="item">
                         <span>Onboarding Rate (Per Product)</span>
-                        <span id="onboardRate">$0</span>
+                        <span id="onboardRate">$15,000</span>
                     </div>
                     <div class="item total-row">
                         <span>One-Time Onboarding (Total)</span>
