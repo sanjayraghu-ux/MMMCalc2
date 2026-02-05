@@ -34,6 +34,15 @@
 
             <div class="section-label">3. Service & Implementation</div>
             <div class="control-group">
+                <label>Billing Options</label>
+                <select id="billing">
+                    <option value="1">Monthly (pay-as-you-go)</option>
+                    <option value="0.9">Bi-Annual Upfront (10% discount)</option>
+                    <option value="0.8">Annual Upfront (20% discount)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
                 <label>Strategy Consulting (Monthly Hours)</label>
                 <input type="number" id="consulting" min="0" max="100" value="0">
             </div>
@@ -54,7 +63,7 @@
             </div>
 
             <div class="summary-card">
-                <div class="price-header">Monthly Recurring Fee</div>
+                <div class="price-header">Effective Monthly Fee</div>
                 <div class="main-price">$<span id="monthlyTotal">0</span></div>
                 <div class="status-badge" id="minFeeBadge">Min Platform Fee Applied</div>
                 
@@ -64,16 +73,16 @@
                         <span id="platformCost">$0</span>
                     </div>
                     <div class="item">
-                        <span>Standard Support</span>
-                        <span>$750</span>
+                        <span>Standard Support ($750 / product)</span>
+                        <span id="supportCost">$0</span>
                     </div>
                     <div class="item">
                         <span>Consulting (@ $250/hr)</span>
                         <span id="consultCost">$0</span>
                     </div>
                     <div class="item">
-                        <span>Onboarding Rate (Per Product)</span>
-                        <span id="onboardRate">$15,000</span>
+                        <span>Billing Discount</span>
+                        <span id="billingDiscount">0%</span>
                     </div>
                     <div class="item total-row">
                         <span>One-Time Onboarding (Total)</span>
