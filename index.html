@@ -1,98 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetricWorks MMM Pricing Estimator</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-</head>
-<body>
-    <div id="successOverlay" class="overlay">
-        <div class="overlay-content">
-            <div class="check-icon">✓</div>
-            <h2>Proposal Generated!</h2>
-            <p>Your MetricWorks investment estimate has been downloaded.</p>
-            <button class="export-btn" onclick="closeSuccess()">Back to Estimator</button>
+<div class="calculator-container" id="capture-area">
+    <div class="input-panel">
+        <h1>MetricWorks MMM Pricing Estimator</h1>
+        <p class="desc">Define your marketing mix modeling scope with per-product granularity.</p>
+
+        <div class="section-label">1. Account Scope</div>
+        <div class="control-group">
+            <label>Number of Products</label>
+            <div class="input-with-action">
+                <input type="number" id="products" min="1" max="20" value="1">
+                <button class="action-btn" onclick="duplicateLastProduct()">Duplicate Product</button>
+            </div>
         </div>
+
+        <div class="section-label">2. Product Configuration</div>
+        <div id="productNameInputs" class="dynamic-inputs"></div>
+
+        <div class="section-label">3. Service & Implementation</div>
+        <div class="control-group">
+            <label>Billing Options</label>
+            <select id="billing">
+                <option value="1">Monthly (pay-as-you-go)</option>
+                <option value="0.9">Bi-Annual Upfront (10% OFF)</option>
+                <option value="0.8">Annual Upfront (20% OFF)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Strategy Consulting (Monthly Hours)</label>
+            <input type="number" id="consulting" min="0" max="100" value="0">
+        </div>
+
+        <div class="control-group">
+            <label>Onboarding Fee ($ per Product)</label>
+            <input type="number" id="onboard" value="15000" step="1000">
+        </div>
+
+        <button class="reset-btn" onclick="resetCalculator()">Reset to Default</button>
     </div>
 
-    <div class="calculator-container" id="capture-area">
-        <div class="input-panel">
-            <h1>MetricWorks MMM Pricing Estimator</h1>
-            <p class="desc">Define your marketing mix modeling scope with per-product granularity.</p>
-
-            <div class="section-label">1. Account Scope</div>
-            <div class="control-group">
-                <label>Number of Products</label>
-                <input type="number" id="products" min="1" max="20" value="1">
+    <div class="display-panel">
+        <div class="summary-card annual-summary">
+            <div class="price-header">Year 1 Total Investment</div>
+            <div class="secondary-price">$<span id="yearOneTotal">0</span></div>
+            <div class="savings-badge" id="savingsContainer" style="display:none;">
+                Save $<span id="totalSavings">0</span> / year
             </div>
-
-            <div class="section-label">2. Product Configuration</div>
-            <div id="productNameInputs" class="dynamic-inputs"></div>
-
-            <div class="section-label">3. Service & Implementation</div>
-            <div class="control-group">
-                <label>Billing Options</label>
-                <select id="billing">
-                    <option value="1">Monthly (pay-as-you-go)</option>
-                    <option value="0.9">Bi-Annual Upfront (10% discount)</option>
-                    <option value="0.8">Annual Upfront (20% discount)</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label>Strategy Consulting (Monthly Hours)</label>
-                <input type="number" id="consulting" min="0" max="100" value="0">
-            </div>
-
-            <div class="control-group">
-                <label>Onboarding Fee ($ per Product)</label>
-                <input type="number" id="onboard" value="15000" step="1000">
-            </div>
-
-            <button class="reset-btn" onclick="resetCalculator()">Reset to Default</button>
+            <p class="small-note">Total TCO (Service + Onboarding)</p>
         </div>
 
-        <div class="display-panel">
-            <div class="summary-card annual-summary">
-                <div class="price-header">Year 1 Total Investment</div>
-                <div class="secondary-price">$<span id="yearOneTotal">0</span></div>
-                <p class="small-note">Total TCO (Service + Onboarding)</p>
-            </div>
-
-            <div class="summary-card">
-                <div class="price-header">Effective Monthly Fee</div>
-                <div class="main-price">$<span id="monthlyTotal">0</span></div>
-                <div class="status-badge" id="minFeeBadge">Min Platform Fee Applied</div>
-                
-                <div class="breakdown">
-                    <div class="item">
-                        <span>Aggregate Platform Fee</span>
-                        <span id="platformCost">$0</span>
-                    </div>
-                    <div class="item">
-                        <span>Standard Support ($750 / product)</span>
-                        <span id="supportCost">$0</span>
-                    </div>
-                    <div class="item">
-                        <span>Consulting (@ $250/hr)</span>
-                        <span id="consultCost">$0</span>
-                    </div>
-                    <div class="item">
-                        <span>Billing Discount</span>
-                        <span id="billingDiscount">0%</span>
-                    </div>
-                    <div class="item total-row">
-                        <span>One-Time Onboarding (Total)</span>
-                        <span id="oneTimeTotal">$0</span>
-                    </div>
+        <div class="summary-card">
+            <div class="price-header">Effective Monthly Fee</div>
+            <div class="main-price">$<span id="monthlyTotal">0</span></div>
+            <div class="status-badge" id="minFeeBadge">Min Platform Fee Applied</div>
+            
+            <div class="breakdown">
+                <div class="item">
+                    <span>Platform Fee (Per Product Sum)</span>
+                    <span id="platformCost">$0</span>
+                </div>
+                <div class="item">
+                    <span>Standard Support ($750 / prod)</span>
+                    <span id="supportCost">$0</span>
+                </div>
+                <div class="item">
+                    <span>Consulting (@ $250/hr)</span>
+                    <span id="consultCost">$0</span>
+                </div>
+                <div class="item">
+                    <span>Billing Discount</span>
+                    <span id="discountTag">0%</span>
+                </div>
+                <div class="item">
+                    <span>Total Models / Year</span>
+                    <span id="totalModelsCount">0</span>
+                </div>
+                <div class="item">
+                    <span>Avg. Price / Model</span>
+                    <span id="avgModelPrice">$0</span>
+                </div>
+                <div class="item total-row">
+                    <span>One-Time Onboarding (Total)</span>
+                    <span id="oneTimeTotal">$0</span>
                 </div>
             </div>
-            <button class="export-btn" id="exportBtn" onclick="exportPDF()">Export Proposal PDF</button>
         </div>
+        <button class="export-btn" id="exportBtn" onclick="exportPDF()">Export Proposal PDF</button>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+</div>
