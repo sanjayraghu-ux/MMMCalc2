@@ -31,7 +31,6 @@ body {
     border: 1px solid var(--border);
 }
 
-/* LEFT PANEL */
 .input-panel {
     padding: 48px;
     border-right: 1px solid var(--border);
@@ -61,12 +60,8 @@ input[type="number"], select {
     color: var(--text-white);
     font-size: 15px;
     outline: none;
-    transition: border-color 0.2s;
 }
 
-input[type="number"]:focus, select:focus { border-color: var(--accent-blue); }
-
-/* DYNAMIC ROWS */
 .product-row {
     display: grid;
     grid-template-columns: 1fr 1.4fr;
@@ -80,7 +75,6 @@ input[type="number"]:focus, select:focus { border-color: var(--accent-blue); }
     font-weight: 600;
 }
 
-/* RIGHT PANEL */
 .display-panel {
     padding: 48px;
     background: var(--panel-right);
@@ -102,7 +96,6 @@ input[type="number"]:focus, select:focus { border-color: var(--accent-blue); }
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, transparent 100%);
 }
 
-.price-header { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em; }
 .main-price { font-size: 56px; font-weight: 800; color: #fff; margin: 8px 0; }
 .secondary-price { font-size: 40px; font-weight: 800; color: var(--accent-blue); margin: 6px 0; }
 
@@ -142,8 +135,6 @@ input[type="number"]:focus, select:focus { border-color: var(--accent-blue); }
     transition: transform 0.2s;
 }
 
-.export-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
 .reset-btn {
     width: 100%;
     padding: 14px;
@@ -152,12 +143,8 @@ input[type="number"]:focus, select:focus { border-color: var(--accent-blue); }
     border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: 12px;
     font-weight: 600;
-    font-size: 13px;
     cursor: pointer;
-    margin-top: 16px;
 }
 
-/* OVERLAY */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 100; }
 .overlay-content { background: var(--panel-left); padding: 48px; border-radius: 24px; text-align: center; border: 1px solid var(--accent-blue); }
-.check-icon { font-size: 48px; margin-bottom: 20px; color: #10b981; }
