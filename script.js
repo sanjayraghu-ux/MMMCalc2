@@ -39,6 +39,7 @@ function calculate() {
     const SUPPORT = 750;
     const CONSULT_RATE = 250;
 
+    // 1. Logic: Sum of all product costs
     let totalProductCost = 0;
     productContainer.querySelectorAll('.prod-cadence').forEach(sel => {
         const annual = parseInt(sel.value);
@@ -46,17 +47,25 @@ function calculate() {
         if (annual >= 365) rate = 200;
         else if (annual >= 180) rate = 300;
         else if (annual >= 104) rate = 350;
+        
+        // Cost = (Units per Year * Price per Unit) / 12 Months
         totalProductCost += (annual * rate) / 12;
     });
 
+    // 2. Aggregate Platform with $2,500 Floor
     const finalPlatform = Math.max(MIN_PLATFORM, totalProductCost);
+    
+    // 3. Totals
     const consultTotal = (parseInt(el.consulting.value) || 0) * CONSULT_RATE;
     const monthlyTotal = finalPlatform + SUPPORT + consultTotal;
     
     const perProductOnboard = parseFloat(el.onboard.value || 0);
     const totalOnboarding = perProductOnboard * numProducts;
+    
+    // 4. Year 1 Total = (Sum of Monthly * 12) + Sum of Onboarding
     const yearOne = (monthlyTotal * 12) + totalOnboarding;
 
+    // UI Updates
     document.getElementById('monthlyTotal').innerText = Math.round(monthlyTotal).toLocaleString();
     document.getElementById('yearOneTotal').innerText = Math.round(yearOne).toLocaleString();
     document.getElementById('platformCost').innerText = '$' + Math.round(finalPlatform).toLocaleString();
@@ -64,15 +73,15 @@ function calculate() {
     document.getElementById('onboardRate').innerText = '$' + perProductOnboard.toLocaleString();
     document.getElementById('oneTimeTotal').innerText = '$' + totalOnboarding.toLocaleString();
     
-    document.getElementById('minFeeBadge').style.visibility = (finalPlatform === MIN_PLATFORM) ? 'visible' : 'hidden';
+    const badge = document.getElementById('minFeeBadge');
+    badge.style.visibility = (finalPlatform === MIN_PLATFORM) ? 'visible' : 'hidden';
 }
 
 function resetCalculator() {
-    el.products.value = 1;
-    el.consulting.value = 0;
-    el.onboard.value = 15000;
-    productContainer.innerHTML = '';
-    calculate();
+    if (confirm("Reset all estimator values?")) {
+        el.products.value = 1; el.consulting.value = 0; el.onboard.value = 15000;
+        productContainer.innerHTML = ''; calculate();
+    }
 }
 
 function exportPDF() {
