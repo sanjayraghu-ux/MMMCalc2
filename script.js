@@ -1,83 +1,98 @@
-const inputs = ['brands', 'products', 'cadence', 'customCadenceValue', 'consulting', 'onboard', 'handoff'];
+const inputs = ['products', 'consulting', 'onboard'];
 const el = {};
 inputs.forEach(id => el[id] = document.getElementById(id));
 
 const productContainer = document.getElementById('productNameInputs');
 
-function updateProductInputs() {
-    const count = parseInt(el.products.value);
-    const existing = productContainer.querySelectorAll('.product-name-row').length;
+function updateProductRows() {
+    const count = parseInt(el.products.value) || 0;
+    const existingRows = productContainer.querySelectorAll('.product-row').length;
 
-    if (count > existing) {
-        for (let i = existing + 1; i <= count; i++) {
-            const div = document.createElement('div');
-            div.className = 'product-name-row';
-            div.innerHTML = `<span>Product ${i}:</span><input type="text" placeholder="Product Name" class="prod-input">`;
-            productContainer.appendChild(div);
+    if (count > existingRows) {
+        for (let i = existingRows + 1; i <= count; i++) {
+            const row = document.createElement('div');
+            row.className = 'product-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Product ${i} Name" class="prod-name">
+                <select class="prod-cadence">
+                    <option value="365">Daily (365/yr)</option>
+                    <option value="180">15 per month (180/yr)</option>
+                    <option value="104">2 per week (104/yr)</option>
+                    <option value="52">1 per week (52/yr)</option>
+                    <option value="12" selected>Monthly (1 per month)</option>
+                </select>
+            `;
+            productContainer.appendChild(row);
+            row.querySelector('.prod-cadence').addEventListener('change', calculate);
         }
-    } else if (count < existing) {
-        for (let i = existing; i > count; i--) {
+    } else if (count < existingRows) {
+        for (let i = existingRows; i > count; i--) {
             productContainer.removeChild(productContainer.lastChild);
         }
     }
 }
 
 function calculate() {
-    updateProductInputs();
-
-    const numBrands = parseInt(el.brands.value);
-    const numProducts = parseInt(el.products.value);
-    const consultHours = parseInt(el.consulting.value);
-    
-    let modelsPerYear = el.cadence.value === 'custom' 
-        ? parseFloat(el.customCadenceValue.value || 0) 
-        : parseFloat(el.cadence.value);
-    
-    document.getElementById('customCadenceBox').style.display = (el.cadence.value === 'custom') ? 'block' : 'none';
-
+    updateProductRows();
+    const numProducts = parseInt(el.products.value) || 0;
     const MIN_PLATFORM = 2500;
     const SUPPORT = 750;
     const CONSULT_RATE = 250;
-    
-    const frequencyMultiplier = 1 + (Math.min(modelsPerYear, 365) / 365) * 0.6;
-    let baseComplexity = 1000 + (numBrands * 600) + (numProducts * 300);
-    
-    const calculatedPlatform = baseComplexity * frequencyMultiplier;
-    const finalPlatform = Math.max(MIN_PLATFORM, calculatedPlatform);
-    
-    const consultTotal = consultHours * CONSULT_RATE;
-    const monthlyRecurring = finalPlatform + SUPPORT + consultTotal;
-    
-    const setupFees = parseFloat(el.onboard.value || 0) + parseFloat(el.handoff.value || 0);
-    const yearOneTotal = (monthlyRecurring * 12) + setupFees;
 
-    document.getElementById('brandLabel').innerText = numBrands;
-    document.getElementById('productLabel').innerText = numProducts;
-    document.getElementById('consultLabel').innerText = consultHours;
-    document.getElementById('monthlyTotal').innerText = Math.round(monthlyRecurring).toLocaleString();
-    document.getElementById('yearOneTotal').innerText = Math.round(yearOneTotal).toLocaleString();
+    // Monthly Platform Fee based on Per-Product Cadence Lookup
+    let totalProductCost = 0;
+    productContainer.querySelectorAll('.prod-cadence').forEach(sel => {
+        const annual = parseInt(sel.value);
+        let rate = 450;
+        if (annual >= 365) rate = 200;
+        else if (annual >= 180) rate = 300;
+        else if (annual >= 104) rate = 350;
+        totalProductCost += (annual * rate) / 12;
+    });
+
+    const finalPlatform = Math.max(MIN_PLATFORM, totalProductCost);
+    const consultTotal = el.consulting.value * CONSULT_RATE;
+    const monthlyTotal = finalPlatform + SUPPORT + consultTotal;
+    
+    // Scaling Onboarding Logic
+    const perProductOnboard = parseFloat(el.onboard.value || 0);
+    const totalOnboarding = perProductOnboard * numProducts;
+    const yearOne = (monthlyTotal * 12) + totalOnboarding;
+
+    // Update UI Elements
+    document.getElementById('monthlyTotal').innerText = Math.round(monthlyTotal).toLocaleString();
+    document.getElementById('yearOneTotal').innerText = Math.round(yearOne).toLocaleString();
     document.getElementById('platformCost').innerText = '$' + Math.round(finalPlatform).toLocaleString();
     document.getElementById('consultCost').innerText = '$' + consultTotal.toLocaleString();
-    document.getElementById('oneTimeTotal').innerText = '$' + setupFees.toLocaleString();
+    
+    // Transparency Line Items
+    document.getElementById('onboardRate').innerText = '$' + perProductOnboard.toLocaleString();
+    document.getElementById('oneTimeTotal').innerText = '$' + totalOnboarding.toLocaleString();
     
     document.getElementById('minFeeBadge').style.visibility = (finalPlatform === MIN_PLATFORM) ? 'visible' : 'hidden';
 }
 
-function exportPDF() {
-    const element = document.getElementById('capture-area');
-    const opt = {
-        margin: 0.2,
-        filename: 'MetricWorks_MMM_Proposal.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, backgroundColor: '#1e293b' },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
-    };
-    html2pdf().set(opt).from(element).save();
+function resetCalculator() {
+    if (confirm("Reset all estimator values?")) {
+        el.products.value = 1;
+        el.consulting.value = 0;
+        el.onboard.value = 15000;
+        productContainer.innerHTML = '';
+        calculate();
+    }
 }
 
-inputs.forEach(id => {
-    const eventType = (id === 'cadence') ? 'change' : 'input';
-    el[id].addEventListener(eventType, calculate);
-});
+function exportPDF() {
+    const btn = document.getElementById('exportBtn');
+    btn.innerText = "Processing...";
+    
+    html2pdf().from(document.getElementById('capture-area')).save().then(() => {
+        btn.innerText = "Export Proposal PDF";
+        document.getElementById('successOverlay').style.display = 'flex';
+    });
+}
 
+function closeSuccess() { document.getElementById('successOverlay').style.display = 'none'; }
+
+inputs.forEach(id => el[id].addEventListener('input', calculate));
 calculate();
