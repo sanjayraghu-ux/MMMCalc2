@@ -19,7 +19,7 @@ function updateProductRows() {
                     <option value="180">15 per month (180/yr)</option>
                     <option value="104">2 per week (104/yr)</option>
                     <option value="52">1 per week (52/yr)</option>
-                    <option value="12" selected>Monthly (1 per month)</option>
+                    <option value="12" selected>Monthly (12/yr)</option>
                 </select>
             `;
             productContainer.appendChild(row);
@@ -39,7 +39,6 @@ function calculate() {
     const SUPPORT = 750;
     const CONSULT_RATE = 250;
 
-    // Monthly Platform Fee based on Per-Product Cadence Lookup
     let totalProductCost = 0;
     productContainer.querySelectorAll('.prod-cadence').forEach(sel => {
         const annual = parseInt(sel.value);
@@ -51,21 +50,17 @@ function calculate() {
     });
 
     const finalPlatform = Math.max(MIN_PLATFORM, totalProductCost);
-    const consultTotal = el.consulting.value * CONSULT_RATE;
+    const consultTotal = (parseInt(el.consulting.value) || 0) * CONSULT_RATE;
     const monthlyTotal = finalPlatform + SUPPORT + consultTotal;
     
-    // Scaling Onboarding Logic
     const perProductOnboard = parseFloat(el.onboard.value || 0);
     const totalOnboarding = perProductOnboard * numProducts;
     const yearOne = (monthlyTotal * 12) + totalOnboarding;
 
-    // Update UI Elements
     document.getElementById('monthlyTotal').innerText = Math.round(monthlyTotal).toLocaleString();
     document.getElementById('yearOneTotal').innerText = Math.round(yearOne).toLocaleString();
     document.getElementById('platformCost').innerText = '$' + Math.round(finalPlatform).toLocaleString();
     document.getElementById('consultCost').innerText = '$' + consultTotal.toLocaleString();
-    
-    // Transparency Line Items
     document.getElementById('onboardRate').innerText = '$' + perProductOnboard.toLocaleString();
     document.getElementById('oneTimeTotal').innerText = '$' + totalOnboarding.toLocaleString();
     
@@ -73,21 +68,15 @@ function calculate() {
 }
 
 function resetCalculator() {
-    if (confirm("Reset all estimator values?")) {
-        el.products.value = 1;
-        el.consulting.value = 0;
-        el.onboard.value = 15000;
-        productContainer.innerHTML = '';
-        calculate();
-    }
+    el.products.value = 1;
+    el.consulting.value = 0;
+    el.onboard.value = 15000;
+    productContainer.innerHTML = '';
+    calculate();
 }
 
 function exportPDF() {
-    const btn = document.getElementById('exportBtn');
-    btn.innerText = "Processing...";
-    
     html2pdf().from(document.getElementById('capture-area')).save().then(() => {
-        btn.innerText = "Export Proposal PDF";
         document.getElementById('successOverlay').style.display = 'flex';
     });
 }
