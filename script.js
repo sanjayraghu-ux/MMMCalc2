@@ -1,4 +1,4 @@
-const inputs = ['products', 'consulting', 'onboard'];
+const inputs = ['products', 'consulting', 'onboard', 'billing'];
 const el = {};
 inputs.forEach(id => el[id] = document.getElementById(id));
 
@@ -35,11 +35,12 @@ function updateProductRows() {
 function calculate() {
     updateProductRows();
     const numProducts = parseInt(el.products.value) || 0;
+    
     const MIN_PLATFORM = 2500;
-    const SUPPORT = 750;
+    const SUPPORT_RATE = 750;
     const CONSULT_RATE = 250;
 
-    // 1. Logic: Sum of all product costs
+    // 1. Calculate Aggregate Platform Fee
     let totalProductCost = 0;
     productContainer.querySelectorAll('.prod-cadence').forEach(sel => {
         const annual = parseInt(sel.value);
@@ -48,30 +49,35 @@ function calculate() {
         else if (annual >= 180) rate = 300;
         else if (annual >= 104) rate = 350;
         
-        // Cost = (Units per Year * Price per Unit) / 12 Months
         totalProductCost += (annual * rate) / 12;
     });
 
-    // 2. Aggregate Platform with $2,500 Floor
     const finalPlatform = Math.max(MIN_PLATFORM, totalProductCost);
-    
-    // 3. Totals
+    const totalSupport = numProducts * SUPPORT_RATE;
     const consultTotal = (parseInt(el.consulting.value) || 0) * CONSULT_RATE;
-    const monthlyTotal = finalPlatform + SUPPORT + consultTotal;
+
+    // 2. Apply Billing Discount
+    const billingMultiplier = parseFloat(el.billing.value);
+    const discountPercent = (1 - billingMultiplier) * 100;
     
+    // Recurring fee after discount
+    const discountedRecurring = (finalPlatform + totalSupport + consultTotal) * billingMultiplier;
+    
+    // 3. One-Time Costs
     const perProductOnboard = parseFloat(el.onboard.value || 0);
     const totalOnboarding = perProductOnboard * numProducts;
     
-    // 4. Year 1 Total = (Sum of Monthly * 12) + Sum of Onboarding
-    const yearOne = (monthlyTotal * 12) + totalOnboarding;
+    // 4. Year 1 Total
+    const yearOne = (discountedRecurring * 12) + totalOnboarding;
 
-    // UI Updates
-    document.getElementById('monthlyTotal').innerText = Math.round(monthlyTotal).toLocaleString();
+    // 5. Update UI
+    document.getElementById('monthlyTotal').innerText = Math.round(discountedRecurring).toLocaleString();
     document.getElementById('yearOneTotal').innerText = Math.round(yearOne).toLocaleString();
     document.getElementById('platformCost').innerText = '$' + Math.round(finalPlatform).toLocaleString();
+    document.getElementById('supportCost').innerText = '$' + totalSupport.toLocaleString();
     document.getElementById('consultCost').innerText = '$' + consultTotal.toLocaleString();
-    document.getElementById('onboardRate').innerText = '$' + perProductOnboard.toLocaleString();
     document.getElementById('oneTimeTotal').innerText = '$' + totalOnboarding.toLocaleString();
+    document.getElementById('billingDiscount').innerText = discountPercent + '%';
     
     const badge = document.getElementById('minFeeBadge');
     badge.style.visibility = (finalPlatform === MIN_PLATFORM) ? 'visible' : 'hidden';
@@ -79,8 +85,12 @@ function calculate() {
 
 function resetCalculator() {
     if (confirm("Reset all estimator values?")) {
-        el.products.value = 1; el.consulting.value = 0; el.onboard.value = 15000;
-        productContainer.innerHTML = ''; calculate();
+        el.products.value = 1;
+        el.consulting.value = 0;
+        el.onboard.value = 15000;
+        el.billing.value = "1";
+        productContainer.innerHTML = '';
+        calculate();
     }
 }
 
@@ -93,4 +103,5 @@ function exportPDF() {
 function closeSuccess() { document.getElementById('successOverlay').style.display = 'none'; }
 
 inputs.forEach(id => el[id].addEventListener('input', calculate));
+el.billing.addEventListener('change', calculate);
 calculate();
