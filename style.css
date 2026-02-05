@@ -1,82 +1,72 @@
 :root {
-    --bg: #0f172a;
-    --card: #1e293b;
-    --primary: #6366f1;
-    --text: #f8fafc;
-    --muted: #94a3b8;
-    --accent: #334155;
+    --bg-dark: #0f111a;
+    --card-bg: #1a1d2e;
+    --input-bg: #141625;
+    --accent-purple: #6366f1;
+    --text-white: #ffffff;
+    --text-muted: #a0aec0;
+    --border-color: #2d3748;
 }
 
-body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    margin: 0;
-}
+/* ... Standard resets from previous responses ... */
 
 .calculator-container {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    background: var(--card);
-    width: 1000px;
+    background: var(--card-bg);
+    max-width: 1100px;
     border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    border: 1px solid var(--border-color);
 }
 
-.input-panel { padding: 40px; border-right: 1px solid var(--accent); }
-.display-panel { padding: 40px; background: #161e2e; display: flex; flex-direction: column; gap: 20px; }
+.input-panel { padding: 40px; border-right: 1px solid var(--border-color); }
 
-h1 { margin: 0; font-size: 24px; line-height: 1.2; }
-.desc { color: var(--muted); font-size: 14px; margin-bottom: 25px; margin-top: 10px; }
-
-.section-label {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    color: var(--primary); margin: 25px 0 10px; letter-spacing: 1px;
+.prod-name {
+    background-color: #ffffff !important;
+    color: #0f111a !important;
+    border: none;
+    font-weight: 600;
 }
 
-.control-group { margin-bottom: 15px; }
-label { display: block; font-size: 13px; margin-bottom: 8px; color: #cbd5e1; }
-
-.dynamic-inputs {
-    background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px;
-    max-height: 180px; overflow-y: auto; margin-bottom: 10px;
+.product-row {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
-.product-name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.product-name-row span { font-size: 11px; color: var(--muted); min-width: 70px; }
-
-input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
-input[type="number"], select, .product-name-row input {
-    width: 100%; padding: 10px; border: 1px solid var(--accent);
-    border-radius: 8px; background: #0f172a; color: #fff;
+.display-panel {
+    padding: 40px;
+    background: #141625;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
-.summary-card { background: var(--card); padding: 25px; border-radius: 20px; text-align: center; }
-.annual-summary { border: 1px solid var(--primary); background: rgba(99, 102, 241, 0.05); }
+/* Results Formatting */
+.main-price { font-size: 54px; font-weight: 800; letter-spacing: -1px; }
+.secondary-price { font-size: 38px; font-weight: 800; color: var(--accent-purple); }
 
-.main-price { font-size: 48px; font-weight: 800; color: #fff; margin: 5px 0; }
-.secondary-price { font-size: 32px; font-weight: 800; color: var(--primary); }
-
-.price-header { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; }
-
-.status-badge {
-    display: inline-block; background: rgba(99, 102, 241, 0.2); color: var(--primary);
-    padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-bottom: 15px;
+.item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 14px;
 }
 
-.breakdown { margin-top: 15px; text-align: left; }
-.item { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--accent); font-size: 13px; color: var(--muted); }
-.total-row { border-top: 2px solid var(--primary); color: #fff; font-weight: 600; padding-top: 15px; }
+.total-row {
+    border-bottom: none;
+    color: var(--text-white);
+    font-weight: 700;
+}
 
 .export-btn {
-    width: 100%; padding: 16px; background: var(--primary); color: #fff;
-    border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+    width: 100%; padding: 20px; background: var(--accent-purple);
+    color: white; border-radius: 12px; border: none; font-weight: 700;
+    cursor: pointer; transition: 0.2s;
 }
 
-.small-note { font-size: 11px; color: var(--muted); margin: 5px 0 0; }
-
-@media (max-width: 900px) { .calculator-container { grid-template-columns: 1fr; width: 100%; } }
+.export-btn:hover { background: #4f46e5; }
