@@ -13,7 +13,7 @@
         <div class="overlay-content">
             <div class="check-icon">✓</div>
             <h2>Proposal Generated!</h2>
-            <p>Your MetricWorks investment estimate has been downloaded.</p>
+            <p>Your MetricWorks estimate has been downloaded.</p>
             <button class="export-btn" onclick="closeSuccess()">Back to Estimator</button>
         </div>
     </div>
@@ -43,12 +43,12 @@
             </div>
 
             <div class="control-group">
-                <label>Strategy Consulting (Monthly Hours at $250/hr)</label>
+                <label>Strategy Consulting (Monthly Hours)</label>
                 <input type="number" id="consulting" min="0" max="100" value="0">
             </div>
 
             <div class="control-group">
-                <label>One-time Onboarding Fee ($ per Product)</label>
+                <label>Onboarding Fee ($ per Product)</label>
                 <input type="number" id="onboard" value="15000" step="1000">
             </div>
 
@@ -72,7 +72,7 @@
                 
                 <div class="breakdown">
                     <div class="item">
-                        <span>Minimum Platform Fee ($2,500 / prod)</span>
+                        <span>Platform Fee (Sum)</span>
                         <span id="platformCost">$0</span>
                     </div>
                     <div class="item">
@@ -87,11 +87,11 @@
                         <span>Billing Discount</span>
                         <span id="discountTag">0%</span>
                     </div>
-                    <div class="item">
+                    <div class="item highlight-row">
                         <span>Total Models / Year</span>
                         <span id="totalModelsCount">0</span>
                     </div>
-                    <div class="item">
+                    <div class="item highlight-row">
                         <span>Avg. Price / Model</span>
                         <span id="avgModelPrice">$0</span>
                     </div>
