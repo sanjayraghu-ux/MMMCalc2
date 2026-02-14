@@ -1,10 +1,11 @@
 /**
  * MetricWorks MMM Pricing Estimator - Logic Controller
- * Features: 
- * - Linear scaling: Platform Fee ($2,500/prod) and Support ($750/prod)
- * - Dynamic product configuration rows
- * - Billing discount application (10% Bi-Annual, 20% Annual)
- * - Unit economic metrics: Total Models/Year & Avg. Price per Model
+ * Updates: 
+ * - Dynamic Platform Fee based on Cadence:
+ * - Daily: $6,083/mo
+ * - 15/mo: $4,500/mo
+ * - 2/wk:  $3,033/mo
+ * - Others: $2,500/mo (Default)
  */
 
 const inputs = ['products', 'consulting', 'onboard', 'billing'];
@@ -14,8 +15,7 @@ inputs.forEach(id => el[id] = document.getElementById(id));
 const productContainer = document.getElementById('productNameInputs');
 
 /**
- * Generates or removes product configuration rows based on the "Number of Products" input.
- * Each row allows for a custom product name and cadence selection.
+ * Generates product configuration rows based on the "Number of Products" input.
  */
 function updateProductRows() {
     const count = parseInt(el.products.value) || 0;
@@ -36,7 +36,6 @@ function updateProductRows() {
                 </select>
             `;
             productContainer.appendChild(row);
-            // Re-calculate whenever a specific product cadence is changed
             row.querySelector('.prod-cadence').addEventListener('change', calculate);
         }
     } else if (count < existingRows) {
@@ -48,26 +47,37 @@ function updateProductRows() {
 
 /**
  * Main calculation engine.
- * Updates all financial and volume metrics based on current inputs.
  */
 function calculate() {
     updateProductRows();
     const numProducts = parseInt(el.products.value) || 0;
     
-    // Constant Rates
-    const PLATFORM_PER_PROD = 2500; 
     const SUPPORT_PER_PROD = 750;
     const CONSULT_RATE = 250;
 
+    let totalPlatformSum = 0;
     let totalAnnualModels = 0;
 
-    // Sum up the annual model volume from all product rows
+    // Iterate through product rows to determine platform fee based on cadence
     productContainer.querySelectorAll('.prod-cadence').forEach(sel => {
-        totalAnnualModels += parseInt(sel.value);
+        const annualModels = parseInt(sel.value);
+        let monthlyPlatformRate = 2500; // Default/Monthly rate
+
+        // Cadence-based pricing logic
+        if (annualModels === 365) {
+            monthlyPlatformRate = 6083;
+        } else if (annualModels === 180) {
+            monthlyPlatformRate = 4500;
+        } else if (annualModels === 104) {
+            monthlyPlatformRate = 3033;
+        }
+
+        totalAnnualModels += annualModels;
+        totalPlatformSum += monthlyPlatformRate;
     });
 
-    // 1. Calculate Core Recurring Components (Linear Scaling)
-    const finalPlatformFee = numProducts * PLATFORM_PER_PROD;
+    // 1. Core Recurring Components
+    const finalPlatformFee = totalPlatformSum;
     const totalSupport = numProducts * SUPPORT_PER_PROD;
     const consultTotal = (parseInt(el.consulting.value) || 0) * CONSULT_RATE;
     
@@ -83,32 +93,26 @@ function calculate() {
     const perProductOnboard = parseFloat(el.onboard.value || 0);
     const totalOnboarding = perProductOnboard * numProducts;
     
-    // 5. Year 1 Total Investment (TCV)
+    // 5. Year 1 Total Investment
     const yearOne = (monthlyDiscounted * 12) + totalOnboarding;
 
-    // 6. Unit Economics (Cost per Model)
-    // Formula: Total Annual Recurring Service Cost / Total Models Produced
+    // 6. Unit Economics
     const avgPricePerModel = totalAnnualModels > 0 ? ((monthlyDiscounted * 12) / totalAnnualModels) : 0;
 
     // --- UI UPDATES ---
-
-    // Primary Pricing
     document.getElementById('monthlyTotal').innerText = Math.round(monthlyDiscounted).toLocaleString();
     document.getElementById('yearOneTotal').innerText = Math.round(yearOne).toLocaleString();
     
-    // Breakdown Components
     document.getElementById('platformCost').innerText = '$' + Math.round(finalPlatformFee).toLocaleString();
     document.getElementById('supportCost').innerText = '$' + totalSupport.toLocaleString();
     document.getElementById('consultCost').innerText = '$' + consultTotal.toLocaleString();
     document.getElementById('onboardRate').innerText = '$' + perProductOnboard.toLocaleString();
     document.getElementById('oneTimeTotal').innerText = '$' + totalOnboarding.toLocaleString();
     
-    // Discount and Volume Metrics
     document.getElementById('discountTag').innerText = Math.round((1 - billingMultiplier) * 100) + '%';
     document.getElementById('totalModelsCount').innerText = totalAnnualModels.toLocaleString();
     document.getElementById('avgModelPrice').innerText = '$' + Math.round(avgPricePerModel).toLocaleString();
     
-    // Savings Badge Logic
     const savingsEl = document.getElementById('savingsContainer');
     if (annualSavings > 0) {
         savingsEl.style.display = 'inline-block';
@@ -117,17 +121,15 @@ function calculate() {
         savingsEl.style.display = 'none';
     }
 
-    // Min Fee Badge Visibility
-    // Since Platform scales linearly starting at $2,500, this is visible for 1 product
+    // Min Badge Logic (Visible if any product is at the base $2,500 rate)
     const minBadge = document.getElementById('minFeeBadge');
     if (minBadge) {
-        minBadge.style.visibility = (numProducts === 1) ? 'visible' : 'hidden';
+        const hasBaseRate = Array.from(productContainer.querySelectorAll('.prod-cadence'))
+                                 .some(sel => ![365, 180, 104].includes(parseInt(sel.value)));
+        minBadge.style.visibility = (hasBaseRate && numProducts > 0) ? 'visible' : 'hidden';
     }
 }
 
-/**
- * Resets the estimator to the default 1-product state.
- */
 function resetCalculator() {
     if (confirm("Reset all estimator values to default?")) {
         el.products.value = 1;
@@ -139,18 +141,14 @@ function resetCalculator() {
     }
 }
 
-/**
- * Exports the current dashboard view to a PDF file.
- */
 function exportPDF() {
     const btn = document.getElementById('exportBtn');
     const captureArea = document.getElementById('capture-area');
-    
     btn.innerText = "Generating PDF...";
     
     const opt = {
         margin: 0.5,
-        filename: 'MetricWorks_MMM_Proposal.pdf',
+        filename: 'MetricWorks_Proposal.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, backgroundColor: '#0f111a' },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
@@ -162,19 +160,12 @@ function exportPDF() {
     });
 }
 
-/**
- * Closes the success modal.
- */
 function closeSuccess() {
     document.getElementById('successOverlay').style.display = 'none';
 }
 
-// Event Listeners for Real-time Calculation
 inputs.forEach(id => {
-    if (el[id]) {
-        el[id].addEventListener('input', calculate);
-    }
+    if (el[id]) el[id].addEventListener('input', calculate);
 });
 
-// Initial load
 calculate();
