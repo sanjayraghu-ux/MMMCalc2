@@ -101,7 +101,7 @@ function exportPDF() {
         margin: [0.1, 0.1],
         filename: `MetricWorks_Proposal_${clientName.replace(/\s+/g, '_')}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, scrollY: 0, windowHeight: element.scrollHeight, height: element.scrollHeight },
+        html2canvas: { scale: 2, scrollY: 0, windowHeight: element.scrollHeight, height: element.scrollHeight, useCORS: true, allowTaint: true },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).save().then(() => {
