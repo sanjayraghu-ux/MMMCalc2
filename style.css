@@ -21,18 +21,33 @@ body {
 }
 
 .calculator-container {
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    display: flex;
+    flex-direction: column;
     background: var(--panel-left);
     width: 100%;
     max-width: 1150px;
     border-radius: 28px;
     overflow: hidden;
     border: 1px solid var(--border);
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+}
+
+.dashboard-header {
+    padding: 30px 48px 10px;
+    background: var(--panel-left);
+}
+
+.mw-logo {
+    height: 40px;
+    width: auto;
+}
+
+.main-layout {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
 }
 
 .input-panel { padding: 48px; border-right: 1px solid var(--border); }
-
 h1 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px; }
 .desc { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
 
@@ -45,7 +60,7 @@ input[type="number"], select {
     border-radius: 12px; background: var(--input-bg); color: #fff; outline: none;
 }
 
-.dynamic-inputs { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; max-height: 300px; overflow-y: auto; margin-bottom: 24px; }
+.dynamic-inputs { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; max-height: 400px; overflow-y: auto; margin-bottom: 24px; }
 .product-row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .prod-name { background-color: #fff !important; color: #000 !important; font-weight: 600; }
 
@@ -58,10 +73,14 @@ input[type="number"], select {
 .secondary-price { font-size: 40px; font-weight: 800; color: var(--accent-blue); }
 .small-note { color: var(--text-high-contrast); font-size: 12px; margin-top: 12px; }
 
-.item { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-high-contrast); }
-.item span:last-child { font-weight: 700; color: #fff; }
+.item { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-high-contrast); }
+.item span:last-child { font-weight: 700; color: #fff; margin-left: 20px; }
 
-.highlight-row span:last-child { color: #38bdf8; } /* Light blue for volume metrics */
+.support-container { flex-direction: row; text-align: left; }
+.support-text { flex: 1; text-align: left; }
+.support-text p { margin: 4px 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+.highlight-row span:last-child { color: #38bdf8; }
 .total-row { color: #fff; font-weight: 800; border-bottom: none; padding-top: 20px; }
 
 .savings-badge { background: var(--success); color: #fff; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 800; margin-top: 10px; }
