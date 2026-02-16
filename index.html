@@ -20,26 +20,36 @@
 
     <div class="calculator-container" id="capture-area">
         <div class="dashboard-header">
-            <img src="https://cdn.prod.website-files.com/6267f33d79f00d2f09968433/6267f5391d1e67a0307f154d_MetricWorks%20Logo.svg" alt="MetricWorks Logo" class="mw-logo">
+            <div class="header-top">
+                <img src="https://cdn.prod.website-files.com/6267f33d79f00d2f09968433/6267f5391d1e67a0307f154d_MetricWorks%20Logo.svg" alt="MetricWorks Logo" class="mw-logo">
+                <div id="preparedForDisplay" class="prepared-display"></div>
+            </div>
         </div>
 
         <div class="main-layout">
             <div class="input-panel">
                 <h1>MMM Pricing Estimator</h1>
-                <p class="desc">Define your marketing mix modeling scope with per-product granularity.</p>
+                <p class="desc">Enter a little info below to get a quick MetricWorks' MMMIaaS estimate</p>
+
+                <div class="section-label">0. Client Info</div>
+                <div class="control-group">
+                    <label>Prepared For (Client Name)</label>
+                    <input type="text" id="preparedFor" placeholder="Enter company or contact name" oninput="updatePreparedBy()">
+                </div>
 
                 <div class="section-label">1. Account Scope</div>
                 <div class="control-group">
-                    <label>Number of Products</label>
+                    <label>How many products would you like to measure?</label>
                     <input type="number" id="products" min="1" max="20" value="1">
                 </div>
 
                 <div class="section-label">2. Product Configuration</div>
+                <p class="sub-label">Enter product names and measurement frequency</p>
                 <div id="productNameInputs" class="dynamic-inputs"></div>
 
                 <div class="section-label">3. Service & Implementation</div>
                 <div class="control-group">
-                    <label>Billing Options</label>
+                    <label>Pick your billing option to get the corresponding discount</label>
                     <select id="billing">
                         <option value="1">Monthly (pay-as-you-go)</option>
                         <option value="0.9">Bi-Annual Upfront (10% OFF)</option>
@@ -48,7 +58,7 @@
                 </div>
 
                 <div class="control-group">
-                    <label>Strategy Consulting (Monthly Hours)</label>
+                    <label>How many Strategy Consulting Hours will you need per month?</label>
                     <input type="number" id="consulting" min="0" max="100" value="0">
                 </div>
 
@@ -64,7 +74,7 @@
                 <div class="summary-card annual-summary">
                     <div class="price-header">Year 1 Total Investment</div>
                     <div class="secondary-price">$<span id="yearOneTotal">0</span></div>
-                    <div class="savings-badge" id="savingsContainer" style="display:none;">
+                    <div id="savingsContainer" class="savings-badge" style="display:none;">
                         Save $<span id="totalSavings">0</span> / year
                     </div>
                     <p class="small-note">Total TCO (Service + Onboarding)</p>
@@ -80,7 +90,6 @@
                             <span>Platform Fee (Sum)</span>
                             <span id="platformCost">$0</span>
                         </div>
-                        
                         <div class="item support-container">
                             <div class="support-text">
                                 <strong>Standard Support ($750 / prod)</strong>
@@ -88,7 +97,6 @@
                             </div>
                             <span id="supportCost">$0</span>
                         </div>
-
                         <div class="item">
                             <span>Consulting (@ $250/hr)</span>
                             <span id="consultCost">$0</span>
