@@ -33,7 +33,7 @@ body {
 }
 
 .dashboard-header {
-    padding: 25px 48px 10px;
+    padding: 30px 48px 15px; /* Slightly adjusted padding for 65px logo */
     background: var(--panel-left);
 }
 
@@ -44,7 +44,7 @@ body {
 }
 
 .mw-logo {
-    height: 50px; /* Recalibrated to 50px */
+    height: 65px; /* Exactly 65px */
     width: auto;
 }
 
