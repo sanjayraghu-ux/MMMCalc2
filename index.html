@@ -21,7 +21,7 @@
     <div class="calculator-container" id="capture-area">
         <div class="input-panel">
             <h1>MetricWorks MMM Pricing Estimator</h1>
-            <p class="desc">Enter a little info below to get a quick MetricWorks' price estimate.</p>
+            <p class="desc">Define your marketing mix modeling scope with per-product granularity.</p>
 
             <div class="section-label">1. Account Scope</div>
             <div class="control-group">
@@ -48,7 +48,7 @@
             </div>
 
             <div class="control-group">
-                <label>Onboarding Fee ($ per Product)</label>
+                <label>One-time Onboarding Fee ($15k per Product)</label>
                 <input type="number" id="onboard" value="15000" step="1000">
             </div>
 
@@ -75,10 +75,15 @@
                         <span>Platform Fee (Sum)</span>
                         <span id="platformCost">$0</span>
                     </div>
-                    <div class="item">
-                        <span>Standard Support ($750 / prod) includes monthly meetings, quarterly performance review, 24 hr response chat support.</span>
+                    
+                    <div class="item support-container">
+                        <div class="support-text">
+                            <strong>Standard Support ($750 / prod)</strong>
+                            <p>Includes monthly meetings, quarterly performance review, 24 hr response chat support.</p>
+                        </div>
                         <span id="supportCost">$0</span>
                     </div>
+
                     <div class="item">
                         <span>Consulting (@ $250/hr)</span>
                         <span id="consultCost">$0</span>
