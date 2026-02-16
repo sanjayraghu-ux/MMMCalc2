@@ -33,7 +33,7 @@ body {
 }
 
 .dashboard-header {
-    padding: 30px 48px 10px;
+    padding: 25px 48px 10px;
     background: var(--panel-left);
 }
 
@@ -44,13 +44,13 @@ body {
 }
 
 .mw-logo {
-    height: 60px; /* Adjusted for better visibility of the new logo */
+    height: 50px; /* Recalibrated size */
     width: auto;
 }
 
 .prepared-display {
     color: var(--text-high-contrast);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
 }
 
