@@ -41,10 +41,9 @@ function calculate() {
     let totalPlatformSum = 0;
     let totalAnnualModels = 0;
 
-    // Platform Fee Logic based on Cadence
     productContainer.querySelectorAll('.prod-cadence').forEach(sel => {
         const annualModels = parseInt(sel.value);
-        let monthlyRate = 2500; // Default
+        let monthlyRate = 2500; 
 
         if (annualModels === 365) monthlyRate = 6083;
         else if (annualModels === 180) monthlyRate = 4500;
@@ -66,10 +65,8 @@ function calculate() {
     const totalOnboarding = perProductOnboard * numProducts;
     const yearOne = (monthlyDiscounted * 12) + totalOnboarding;
 
-    // Avg Price / Model Logic
     const avgPrice = totalAnnualModels > 0 ? ((monthlyDiscounted * 12) / totalAnnualModels) : 0;
 
-    // UPDATE UI
     document.getElementById('monthlyTotal').innerText = Math.round(monthlyDiscounted).toLocaleString();
     document.getElementById('yearOneTotal').innerText = Math.round(yearOne).toLocaleString();
     document.getElementById('platformCost').innerText = '$' + Math.round(totalPlatformSum).toLocaleString();
@@ -78,7 +75,6 @@ function calculate() {
     document.getElementById('oneTimeTotal').innerText = '$' + totalOnboarding.toLocaleString();
     document.getElementById('discountTag').innerText = Math.round((1 - billingMultiplier) * 100) + '%';
     
-    // Volume & Price Metrics
     document.getElementById('totalModelsCount').innerText = totalAnnualModels.toLocaleString();
     document.getElementById('avgModelPrice').innerText = '$' + Math.round(avgPrice).toLocaleString();
 
@@ -99,8 +95,23 @@ function resetCalculator() {
 
 function exportPDF() {
     const btn = document.getElementById('exportBtn');
-    btn.innerText = "Generating...";
-    html2pdf().from(document.getElementById('capture-area')).save().then(() => {
+    const element = document.getElementById('capture-area');
+    btn.innerText = "Generating PDF...";
+
+    const opt = {
+        margin: [0.2, 0.2],
+        filename: 'MetricWorks_Proposal.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2, 
+            scrollY: 0,
+            windowHeight: element.scrollHeight,
+            height: element.scrollHeight
+        },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
         btn.innerText = "Export Proposal PDF";
         document.getElementById('successOverlay').style.display = 'flex';
     });
