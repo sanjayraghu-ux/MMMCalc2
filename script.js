@@ -84,9 +84,51 @@ function calculate() {
     document.getElementById('minFeeBadge').style.visibility = (hasBaseRate && numProducts > 0) ? 'visible' : 'hidden';
 }
 
+async function submitLead() {
+    const email = document.getElementById('salesEmail').value;
+    const client = document.getElementById('preparedFor').value || "Not Provided";
+    const total = document.getElementById('yearOneTotal').innerText;
+    const btn = document.getElementById('submitLeadBtn');
+
+    if (!email || !email.includes('@')) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    btn.innerText = "Sending...";
+    btn.disabled = true;
+
+    // REPLACE THIS URL with your Google Apps Script Web App URL
+    const WEBHOOK_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+    const payload = {
+        email: email,
+        client_name: client,
+        estimate_total: "$" + total
+    };
+
+    try {
+        await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            body: JSON.stringify(payload)
+        });
+        
+        btn.innerText = "Sent Successfully!";
+        btn.style.background = "#059669";
+        alert("Success! Your estimate has been sent to the MetricWorks sales team.");
+    } catch (error) {
+        btn.innerText = "Error - Try Again";
+        btn.disabled = false;
+        alert("There was an error sending the data. Please check your connection.");
+    }
+}
+
 function resetCalculator() {
     el.products.value = 1; el.consulting.value = 0; el.onboard.value = 15000; el.billing.value = "1";
     document.getElementById('preparedFor').value = '';
+    document.getElementById('salesEmail').value = '';
     updatePreparedBy();
     productContainer.innerHTML = ''; calculate();
 }
